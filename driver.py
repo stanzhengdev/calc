@@ -13,7 +13,12 @@ import calc
 
 
 def main():
-    pass
+
+    while True:
+        print("Enter a statement to be evaluated: ")
+        exp = input()
+        print("expression '{}' was evaluated to {}".format(
+            exp, calc.evaluate(exp)))
 
 if __name__ == '__main__':
     main()
