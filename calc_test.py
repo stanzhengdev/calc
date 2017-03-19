@@ -20,10 +20,11 @@ testcases = [
 
 
 class TestParse(unittest.TestCase):
+    """tests the calc.parse method"""
 
     def test_func(self):
         for test in testcases:
-            print(parse(test[0]))
+            # cleanup Stackinput
             parsed = list(i for i in parse(test[0]).dump() if i not in "()")
             if parsed:
                 self.assertEqual(parsed, test[1])

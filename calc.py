@@ -69,6 +69,12 @@ def parse(expression):
     # Assumes one character-size token/operators
 
     If Invalid expression, can raise a ParseError
+
+    args:
+        expression - a string expression that is parsed to be evaluated
+
+    returns:
+        Stack - a post-fix oriented stack
     """
 
     operator_stack = Stack()
@@ -109,40 +115,44 @@ def parse(expression):
 def evaluate(expression):
     """
 
-    type string expression - raw valid expression
-    type int    expression
-
+    args:
+        type string expression - raw valid expression
+    returns:
+        integer - evaluation of statement is valid
+    raises:
+        ParseError - if the expression has invalid unrecognized characters that cannot be identified
     """
 
     try:
         # Parse into a Stack and evaluate
         parsed = parse(expression)
         return postfix_eval(parsed)
-    except ParseError as e:
-        return e
+    except ParseError as parse_error:
+        return parse_error
 
 
-def postfix_eval(s):
-    s.reverse()
+def postfix_eval(stack):
+    """postfix_eval takes a stack and evaluates the function
+
+    args:
+        stack (Stack): prepared expression put in postfix notation
+
+    returns:
+        int: integer evaluation of the expression
+    """
+    stack.reverse()
     temp = Stack()
-    while s:
-        token = s.pop()
-        if token in NUMBERS:
-            temp.push(int(token))
-        elif token in "()":
+    while stack:
+        token = stack.pop()
+        if token in "()":
             continue
-        else:
-            op = OPERATORS[token]
-            print(op, s, temp)
+        elif token in OPERATORS:
+            oper = OPERATORS[token]
             if len(temp) < 2:
-                right, left = temp.pop(), s.pop()
+                right, left = temp.pop(), stack.pop()
             else:
                 right, left = temp.pop(), temp.pop()
-            temp.push(op.function(left, right))
-    print(temp.peek())
+            temp.push(oper.function(left, right))
+        else:
+            temp.push(int(token))
     return temp.peek()
-
-if __name__ == '__main__':
-
-    postfix_eval(parse("4+8/4"))
-    postfix_eval(parse("((4+8)/4)"))
