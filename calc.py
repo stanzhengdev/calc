@@ -12,14 +12,14 @@ operation = namedtuple(
     "operation", ["operator", "precedent", "function"])
 
 OPERATORS = {
-    "(": operation("(", 0, None, None),
-    ")": operation(")", 0, None, None),
+    "(": operation("(", -1, None,),
+    ")": operation(")", 10, None),
     "^": operation("^", 1, operator.__pow__),
     "*": operation("*", 2, operator.__mul__),
     "/": operation("/", 2, operator.__floordiv__),
     "+": operation("+", 3, operator.__add__),
     "-": operation("-", 3, operator.__sub__),
-    None: operation("", None, None)
+    None: operation("", 100, None)
 }
 
 
