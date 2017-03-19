@@ -39,6 +39,9 @@ class Stack():
             d = []
         self.d = d
 
+    def dump(self):
+        return self.d
+
     def peek(self):
         return self.d[-1] if len(self) != 0 else None
 
@@ -78,7 +81,7 @@ def parse(expression):
             continue
         elif t in OPERATORS:
             last_token = operator_stack.peek()
-            if last_token and OPERATORS[t].precedent < OPERATORS[last_token].precedent:
+            if OPERATORS[t].precedent > OPERATORS[last_token].precedent:
                 while operator_stack:
                     if t != ")" and last_token != "(":
                         output_stack.push(operator_stack.pop())
@@ -93,6 +96,8 @@ def parse(expression):
         else:
             raise ParseError("Invalid Character")
     while operator_stack:
+        if operator_stack.peek() in "()":
+            operator_stack.pop()
         output_stack.push(operator_stack.pop())
 
     return output_stack
@@ -107,20 +112,33 @@ def evaluate(expression):
     """
 
     try:
-        # BUILD AST
-        # Evaluate infix Style
-        # parse (expression )
-        return eval(expression)
+        # Parse into a Stack and evaluate
+        parsed = parse(expression)
+        return postfix_eval(parsed)
     except ParseError as e:
         return e
-    except Exception as e:
-        return False
 
 
 def postfix_eval(s):
-    # s.reverse()
-    while(s):
-        print(s.pop(), sep=" ")
+    s.reverse()
+    temp = Stack()
+    summ = 0
+    while (s):
+        token = s.pop()
+        if token in NUMBERS:
+            temp.push(int(token))
+        elif token in "()":
+            continue
+        else:
+            op = OPERATORS[token]
+            print(op, s, temp)
+            if len(temp) < 2:
+                right, left = temp.pop(), s.pop()
+            else:
+                right, left = temp.pop(), temp.pop()
+            temp.push(op.function(left, right))
+    print(temp.peek())
+    return temp.peek()
 
 if __name__ == '__main__':
 
