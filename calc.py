@@ -32,6 +32,11 @@ class ParseError(Exception):
     pass
 
 
+class EvaluationError(Exception):
+    """Exception when invalid expression evaluation"""
+    pass
+
+
 class Stack():
     """Stack implementation wrapping Python Lists"""
 
@@ -47,7 +52,7 @@ class Stack():
         return self.d[-1] if len(self) != 0 else None
 
     def pop(self):
-        return self.d.pop()
+        return self.d.pop() if len(self) != 0 else None
 
     def push(self, val):
         if val:
@@ -126,9 +131,14 @@ def evaluate(expression):
     try:
         # Parse into a Stack and evaluate
         parsed = parse(expression)
-        return postfix_eval(parsed)
+        exp = postfix_eval(parsed)
+        return exp
     except ParseError as parse_error:
         return parse_error
+    except (EvaluationError) as e:
+        return None
+    except Exception:
+        return "Error"
 
 
 def postfix_eval(stack):
@@ -140,19 +150,22 @@ def postfix_eval(stack):
     returns:
         int: integer evaluation of the expression
     """
-    stack.reverse()
-    temp = Stack()
-    while stack:
-        token = stack.pop()
-        if token in "()":
-            continue
-        elif token in OPERATORS:
-            oper = OPERATORS[token]
-            if len(temp) < 2:
-                right, left = temp.pop(), stack.pop()
+    try:
+        stack.reverse()
+        temp = Stack()
+        while stack:
+            token = stack.pop()
+            if token in "()":
+                continue
+            elif token in OPERATORS:
+                oper = OPERATORS[token]
+                if len(temp) < 2:
+                    right, left = temp.pop(), stack.pop()
+                else:
+                    right, left = temp.pop(), temp.pop()
+                temp.push(oper.function(left, right))
             else:
-                right, left = temp.pop(), temp.pop()
-            temp.push(oper.function(left, right))
-        else:
-            temp.push(int(token))
-    return temp.peek()
+                temp.push(int(token))
+        return temp.peek()
+    except (TypeError, EvaluationError) as e:
+        return EvaluationError("Cannot be parsed")
