@@ -74,8 +74,11 @@ def parse(expression):
     operator_stack = Stack()
     output_stack = Stack()
 
-    for t in expression:
+    for index, t in enumerate(expression):
         if t in NUMBERS:
+            if t in NUMBERS:
+                if index != 0 and expression[index - 1] in NUMBERS:
+                    t = output_stack.pop() + t
             output_stack.push(t)
         elif t == SPACE:
             continue
