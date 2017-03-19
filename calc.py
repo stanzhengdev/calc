@@ -34,8 +34,10 @@ class ParseError(Exception):
 class Stack():
     """Stack implementation wrapping Python Lists"""
 
-    def __init__(self):
-        self.d = []
+    def __init__(self, d=None):
+        if d is None:
+            d = []
+        self.d = d
 
     def peek(self):
         return self.d[-1] if len(self) != 0 else None
@@ -46,6 +48,9 @@ class Stack():
     def push(self, val):
         if val:
             self.d.append(val)
+
+    def reverse(self):
+        self.d = self.d[::-1]
 
     def __len__(self):
         return len(self.d)
