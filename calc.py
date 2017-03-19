@@ -5,17 +5,24 @@ Shunting-yard_algorithm https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 Operator-precedence parser
 """
 
+import operator
+from collections import namedtuple
+
+operation = namedtuple(
+    "operation", ["operator", "precedent", "function"])
 
 OPERATORS = {
-    "(": 0,
-    ")": 0,
-    "^": 1,
-    "*": 2,
-    "/": 2,
-    "+": 3,
-    "-": 3,
-    None: 100
+    "(": operation("(", 0, None, None),
+    ")": operation(")", 0, None, None),
+    "^": operation("^", 1, operator.__pow__),
+    "*": operation("*", 2, operator.__mul__),
+    "/": operation("/", 2, operator.__floordiv__),
+    "+": operation("+", 3, operator.__add__),
+    "-": operation("-", 3, operator.__sub__),
+    None: operation("", None, None)
 }
+
+
 NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 SPACE = ' '
 
@@ -65,16 +72,17 @@ def parse(expression):
         elif t == SPACE:
             continue
         elif t in OPERATORS:
-            while operator_stack:
-                last_token = operator_stack.peek()
-                if t != ")" and last_token != "(":
-                    output_stack.push(operator_stack.pop())
-                else:
-                    if last_token != "(":
+            last_token = operator_stack.peek()
+            if last_token and OPERATORS[t].precedent < OPERATORS[last_token].precedent:
+                while operator_stack:
+                    if t != ")" and last_token != "(":
                         output_stack.push(operator_stack.pop())
                     else:
-                        operator_stack.pop()
-                        break
+                        if last_token != "(":
+                            output_stack.push(operator_stack.pop())
+                        else:
+                            operator_stack.pop()
+                            break
             if t != ")":
                 operator_stack.push(t)
         else:
@@ -102,3 +110,14 @@ def evaluate(expression):
         return e
     except Exception as e:
         return False
+
+
+def postfix_eval(s):
+    # s.reverse()
+    while(s):
+        print(s.pop(), sep=" ")
+
+if __name__ == '__main__':
+
+    postfix_eval(parse("4+8/4"))
+    postfix_eval(parse("((4+8)/4)"))
