@@ -28,6 +28,7 @@ SPACE = ' '
 
 
 class ParseError(Exception):
+    """Exception when invalid character in input"""
     pass
 
 
@@ -71,7 +72,6 @@ def parse(expression):
     """
 
     operator_stack = Stack()
-    precedent = Stack()
     output_stack = Stack()
 
     for t in expression:
@@ -122,8 +122,7 @@ def evaluate(expression):
 def postfix_eval(s):
     s.reverse()
     temp = Stack()
-    summ = 0
-    while (s):
+    while s:
         token = s.pop()
         if token in NUMBERS:
             temp.push(int(token))
