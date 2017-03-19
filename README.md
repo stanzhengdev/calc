@@ -6,8 +6,9 @@ Supports basic calculator operators `add`, `sub`, `mult`, `div`, `exp`.
 
 ### Run
 ```
-# Tested on Python 3.6.0+
-python -m unittest
+# Tested on Python 3.6.0+ and Python 2.7
+ python -m unittest calc_test.py
+ python driver.py
 ```
 
 ### License
