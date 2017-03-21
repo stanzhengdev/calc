@@ -130,7 +130,7 @@ def evaluate(expression):
 
     try:
         # Parse into a Stack and evaluate
-        parsed = parse(expression)
+        parsed = parse(str(expression))
         exp = postfix_eval(parsed)
         return exp
     except ParseError as parse_error:
