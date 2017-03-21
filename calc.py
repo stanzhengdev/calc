@@ -55,7 +55,7 @@ class Stack():
         return self.d.pop() if len(self) != 0 else None
 
     def push(self, val):
-        if val:
+        if val is not None:
             self.d.append(val)
 
     def reverse(self):
@@ -166,6 +166,9 @@ def postfix_eval(stack):
                 temp.push(oper.function(left, right))
             else:
                 temp.push(int(token))
+
+            if temp.peek() is None:
+                raise EvaluationError
         return temp.peek()
     except (TypeError, EvaluationError) as e:
-        return EvaluationError("Cannot be parsed")
+        return EvaluationError("Cannot be evaluated")
